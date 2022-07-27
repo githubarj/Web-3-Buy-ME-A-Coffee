@@ -3,12 +3,13 @@
 pragma solidity ^0.8.4;
 
 contract BuyMeACoffee {
+    
     // Event to emit when a memo is created
     event NewMemo(
-        address indexed from'
+        address indexed from,
         uint256 timestamp,
         string name,
-        string messsage
+        string message
     );
 
 
@@ -17,7 +18,7 @@ contract BuyMeACoffee {
         address from;
         uint256 timestamp;
         string name;
-        string messsage;
+        string message;
     }
 
     //List of all memos 
@@ -29,7 +30,7 @@ contract BuyMeACoffee {
     //Constructor is run once when the contract is deployed
     constructor (){
         //we can set the owner address using the msg.sender method, we need to set is as payable too
-        owner = payable msg.sender; 
+        owner = payable (msg.sender); 
     }
 
     /**
@@ -40,7 +41,7 @@ contract BuyMeACoffee {
 
      //memory keyword saves us some gas
     //payable allows the an address to receive money
-     function  buyCoffee(string memory _name, string memory _message) public payable () {
+     function  buyCoffee(string memory _name, string memory _message) public payable {
 
         require (msg.value > 0 , "Cant buy coffee with 0 eth");
         memos.push(
@@ -48,17 +49,17 @@ contract BuyMeACoffee {
                 msg.sender,
                 block.timestamp,
                 _name,
-                message
+                _message
             )
-        )
+        );
 
         //emit a log event when a new memo is created
         emit NewMemo(
                 msg.sender,
                 block.timestamp,
                 _name,
-                message
-            )
+                _message
+            );
 
 
 
@@ -67,8 +68,14 @@ contract BuyMeACoffee {
         
      }
 
-     function withdraw () public {
+     function withdrawTips () public {
+        require (owner.send(address(this).balance));
         
+     }
+
+     function getMemos () public view returns (Memo[] memory){
+        return memos; 
+
      }
 
 
